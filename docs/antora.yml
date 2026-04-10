@@ -1,0 +1,6 @@
+name: icap-virusscan
+title: icap-virusscan
+version: master
+start_page: ROOT:index.adoc
+nav:
+  - modules/ROOT/partials/nav.adoc

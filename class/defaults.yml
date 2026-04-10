@@ -1,0 +1,5 @@
+parameters:
+  icap_virusscan:
+    =_metadata:
+      multi_tenant: true
+    namespace: syn-icap-virusscan
