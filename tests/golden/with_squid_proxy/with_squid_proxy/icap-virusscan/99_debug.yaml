@@ -74,6 +74,10 @@ data:
           labels:
             add-label: "from_with_squid_proxy"
         spec:
+          strategy:
+            rollingUpdate:
+              maxSurge: 1
+              maxUnavailable: 0
           template:
             metadata:
               annotations:
