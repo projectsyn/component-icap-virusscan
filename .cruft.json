@@ -7,7 +7,7 @@
       "name": "icap-virusscan",
       "slug": "icap-virusscan",
       "parameter_key": "icap_virusscan",
-      "test_cases": "defaults",
+      "test_cases": "defaults with_squid_proxy",
       "add_lib": "n",
       "add_pp": "n",
       "add_golden": "y",
