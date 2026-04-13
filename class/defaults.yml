@@ -2,4 +2,57 @@ parameters:
   icap_virusscan:
     =_metadata:
       multi_tenant: true
+      multi_instance: true
     namespace: syn-icap-virusscan
+
+    debug: false
+
+    createNamespace: true
+    namespaceAnnotations: {}
+    namespaceLabels: {}
+
+    enable_squid: false
+    squid_domain:
+    replicas: 2
+    env:
+      clamav: {}
+      c-icap:
+        CLAMD_MAXSIZE: 50m
+        CLAMD_IP: 127.0.0.1
+    deployments:
+      clamav-icap:
+        metadata: {}
+        spec:
+          template:
+            spec: {}
+        container_cicap:
+          image: "ghcr.io/bacluc/c-icap:1"
+          resources:
+            requests:
+              cpu: "120m"
+              memory: "200Mi"
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
+        container_clamav:
+          image: "ghcr.io/bacluc/clamav:1"
+          resources:
+            requests:
+              cpu: "120m"
+              memory: "1280Mi"
+            limits:
+              cpu: "2000m"
+              memory: "3072Mi"
+      squid:
+        metadata: {}
+        spec:
+          template:
+            spec: {}
+        container_squid:
+          image: "ghcr.io/bacluc/squid:1"
+          resources:
+            requests:
+              cpu: '120m'
+              memory: '100Mi'
+            limits:
+              memory: '200Mi'

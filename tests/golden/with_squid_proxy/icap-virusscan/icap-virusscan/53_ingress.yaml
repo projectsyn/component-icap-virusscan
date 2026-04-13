@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    route.openshift.io/insecureEdgeTerminationPolicy: Redirect
+    route.openshift.io/termination: edge
+  labels:
+    app.hin-infra.ch/ingress-public: 'true'
+  name: squid-ingress
+  namespace: syn-icap-virusscan
+spec:
+  ingressClassName: openshift-public
+  rules:
+    - host: test-icap-virusscan.apps.c-hin-test-rma1.hin-infra.ch
+      http:
+        paths:
+          - backend:
+              service:
+                name: squid
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
