@@ -26,13 +26,34 @@ spec:
             - configMapRef:
                 name: squid-configmap
           image: ghcr.io/bacluc/squid:latest
+          livenessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            tcpSocket:
+              port: 3128
+            timeoutSeconds: 5
           name: squid
           ports:
             - containerPort: 3128
               name: http
+          readinessProbe:
+            failureThreshold: 1
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 3128
+            timeoutSeconds: 3
           resources:
             limits:
               memory: 400Mi
             requests:
               cpu: 100m
               memory: 210Mi
+          startupProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            tcpSocket:
+              port: 3128
+            timeoutSeconds: 5

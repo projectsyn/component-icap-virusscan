@@ -33,10 +33,24 @@ spec:
             - configMapRef:
                 name: clamav
           image: ghcr.io/bacluc/clamav:1
+          livenessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            tcpSocket:
+              port: 3310
+            timeoutSeconds: 5
           name: clamav
           ports:
             - containerPort: 3310
               name: clamav
+          readinessProbe:
+            failureThreshold: 1
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 3310
+            timeoutSeconds: 3
           resources:
             limits:
               cpu: 2000m
@@ -44,14 +58,35 @@ spec:
             requests:
               cpu: 120m
               memory: 1280Mi
+          startupProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            tcpSocket:
+              port: 3310
+            timeoutSeconds: 5
         - envFrom:
             - configMapRef:
                 name: c-icap
           image: ghcr.io/bacluc/c-icap:1
+          livenessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            tcpSocket:
+              port: 1344
+            timeoutSeconds: 5
           name: c-icap
           ports:
             - containerPort: 1344
               name: icap
+          readinessProbe:
+            failureThreshold: 1
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 1344
+            timeoutSeconds: 3
           resources:
             limits:
               cpu: 500m
@@ -59,3 +94,10 @@ spec:
             requests:
               cpu: 120m
               memory: 200Mi
+          startupProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            tcpSocket:
+              port: 1344
+            timeoutSeconds: 5
