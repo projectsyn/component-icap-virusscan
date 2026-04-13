@@ -35,6 +35,27 @@ parameters:
             limits:
               cpu: "500m"
               memory: "500Mi"
+          livenessProbe:
+            tcpSocket:
+              port: 1344
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 1344
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 1
+          startupProbe:
+            tcpSocket:
+              port: 1344
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
         container_clamav:
           image: "ghcr.io/bacluc/clamav:1"
           resources:
@@ -44,6 +65,27 @@ parameters:
             limits:
               cpu: "2000m"
               memory: "3072Mi"
+          livenessProbe:
+            tcpSocket:
+              port: 3310
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 3310
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 1
+          startupProbe:
+            tcpSocket:
+              port: 3310
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
       squid:
         metadata: {}
         spec:
@@ -57,3 +99,24 @@ parameters:
               memory: '200Mi'
             limits:
               memory: '400Mi'
+          livenessProbe:
+            tcpSocket:
+              port: 3128
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 3128
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 1
+          startupProbe:
+            tcpSocket:
+              port: 3128
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
