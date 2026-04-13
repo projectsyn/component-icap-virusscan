@@ -1,0 +1,15 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: clamav-icap
+    instance: with_squid_proxy
+  name: clamav-icap
+  namespace: syn-icap-virusscan
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: clamav-icap
+      instance: with_squid_proxy
+  unhealthyPodEvictionPolicy: IfHealthyBudget

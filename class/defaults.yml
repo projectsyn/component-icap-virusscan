@@ -14,6 +14,7 @@ parameters:
     enable_squid: false
     squid_domain:
     replicas: 2
+    minAvailable: 1
     env:
       clamav: {}
       c-icap:

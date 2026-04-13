@@ -67,6 +67,7 @@ data:
         CLAMD_IP: "127.0.0.1"
         CLAMD_MAXSIZE: "50m"
       clamav: {}
+    minAvailable: 1
     namespace: "syn-icap-virusscan"
     namespaceAnnotations: {}
     namespaceLabels: {}

@@ -119,6 +119,23 @@ local deployment = std.mergePatch({
   },
 }, sanitizedDeploymentParams);
 
+local podDisruptionBudget = {
+  apiVersion: 'policy/v1',
+  kind: 'PodDisruptionBudget',
+  metadata: {
+    name: deployment.metadata.name,
+    namespace: params.namespace,
+    labels: selectorLabels,
+  },
+  spec: {
+    minAvailable: params.minAvailable,
+    selector: {
+      matchLabels: selectorLabels,
+    },
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget',
+  },
+};
+
 local service = {
   apiVersion: 'v1',
   kind: 'Service',
@@ -146,6 +163,7 @@ local service = {
   '01_clamavConfigMap': clamavConfigMap,
   '02_cicapConfigMap': cIcapConfigMap,
   '03_deployment': deployment,
-  '04_service': service,
+  [if params.replicas > 1 then '04_podDiscuptionBudget']: podDisruptionBudget,
+  '05_service': service,
 } + (import 'lib/testSetup.libsonnet')
 + (import 'lib/debug.libsonnet')
