@@ -3,12 +3,21 @@ local inv = kap.inventory();
 local params = inv.parameters.icap_virusscan;
 local argocd = import 'lib/argocd.libjsonnet';
 
-local app = argocd.App('icap-virusscan', params.namespace);
+local instance = inv.parameters._instance;
+local app = argocd.App(instance, params.argocdNamespace, secrets=true, base='icap_virusscan') {
+  spec+: {
+    syncPolicy+: {
+      syncOptions+: [
+        'ServerSideApply=true',
+      ],
+    },
+  },
+};
 
 local appPath =
   local project = std.get(std.get(app, 'spec', {}), 'project', 'syn');
   if project == 'syn' then 'apps' else 'apps-%s' % project;
 
 {
-  ['%s/icap-virusscan' % appPath]: app,
+  ['%s/%s' % [ appPath, instance ]]: app,
 }

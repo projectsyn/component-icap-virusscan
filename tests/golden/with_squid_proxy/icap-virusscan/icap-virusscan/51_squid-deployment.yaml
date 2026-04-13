@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    add-annotation: from_with_squid_proxy
+  labels:
+    add-label: from_with_squid_proxy
+    app: squid
+  name: squid
+  namespace: syn-icap-virusscan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: squid
+  template:
+    metadata:
+      annotations:
+        add-annotation: from_with_squid_proxy
+      labels:
+        add-label: from_with_squid_proxy
+        app: squid
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: squid-configmap
+          image: ghcr.io/bacluc/squid:latest
+          name: squid
+          ports:
+            - containerPort: 3128
+              name: http
+          resources:
+            limits:
+              memory: 160Mi
+            requests:
+              cpu: 100m
+              memory: 80Mi

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    add-annotation: from_with_squid_proxy
+  labels:
+    add-label: from_with_squid_proxy
+    app: clamav-icap
+  name: clamav-icap
+  namespace: syn-icap-virusscan
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: clamav-icap
+  template:
+    metadata:
+      annotations:
+        add-annotation: from_with_squid_proxy
+      labels:
+        add-label: from_with_squid_proxy
+        app: clamav-icap
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: clamav
+          image: ghcr.io/bacluc/clamav:latest
+          name: clamav
+          ports:
+            - containerPort: 3310
+              name: clamav
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 4072Mi
+            requests:
+              cpu: 120m
+              memory: 1280Mi
+        - envFrom:
+            - configMapRef:
+                name: c-icap
+          image: ghcr.io/bacluc/c-icap:latest
+          name: c-icap
+          ports:
+            - containerPort: 1344
+              name: icap
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi

@@ -1,3 +1,51 @@
-# Overwrite parameters here
-
-# parameters: {...}
+parameters:
+  icap_virusscan:
+    debug: true
+    enable_squid: true
+    squid_domain: test-icap-virusscan.apps.c-hin-test-rma1.hin-infra.ch
+    deployments:
+      clamav-icap:
+        metadata:
+          labels:
+            add-label: "from_with_squid_proxy"
+          annotations:
+            add-annotation: "from_with_squid_proxy"
+        spec:
+          template:
+            metadata:
+              labels:
+                add-label: "from_with_squid_proxy"
+              annotations:
+                add-annotation: "from_with_squid_proxy"
+            spec: {}
+        container_cicap:
+          image: "ghcr.io/bacluc/c-icap:latest"
+          resources:
+            requests:
+              cpu: "100m"
+        container_clamav:
+          image: "ghcr.io/bacluc/clamav:latest"
+          resources:
+            limits:
+              memory: "4072Mi"
+      squid:
+        metadata:
+          labels:
+            add-label: "from_with_squid_proxy"
+          annotations:
+            add-annotation: "from_with_squid_proxy"
+        spec:
+          template:
+            metadata:
+              labels:
+                add-label: "from_with_squid_proxy"
+              annotations:
+                add-annotation: "from_with_squid_proxy"
+        container_squid:
+          image: "ghcr.io/bacluc/squid:latest"
+          resources:
+            requests:
+              cpu: '100m'
+              memory: '80Mi'
+            limits:
+              memory: '160Mi'

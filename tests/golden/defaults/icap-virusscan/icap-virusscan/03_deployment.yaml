@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: clamav-icap
+  name: clamav-icap
+  namespace: syn-icap-virusscan
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: clamav-icap
+  template:
+    metadata:
+      labels:
+        app: clamav-icap
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: clamav
+          image: ghcr.io/bacluc/clamav:1
+          name: clamav
+          ports:
+            - containerPort: 3310
+              name: clamav
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 3072Mi
+            requests:
+              cpu: 120m
+              memory: 1280Mi
+        - envFrom:
+            - configMapRef:
+                name: c-icap
+          image: ghcr.io/bacluc/c-icap:1
+          name: c-icap
+          ports:
+            - containerPort: 1344
+              name: icap
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 120m
+              memory: 200Mi
