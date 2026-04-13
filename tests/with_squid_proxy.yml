@@ -1,5 +1,5 @@
 parameters:
-  icap_virusscan:
+  with_squid_proxy:
     debug: true
     enable_squid: true
     squid_domain: test-icap-virusscan.apps.c-hin-test-rma1.hin-infra.ch
