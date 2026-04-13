@@ -10,7 +10,10 @@ local instance = inv.parameters._instance;
 local clamavConfigMapName = 'clamav';
 local cIcapConfigMapName = 'c-icap';
 
-local selectorLabels = { app: 'clamav-icap' };
+local selectorLabels = {
+  app: 'clamav-icap',
+  instance: instance,
+};
 
 local namespace = kube.Namespace(params.namespace) {
   metadata+: {
@@ -72,6 +75,21 @@ local deployment = std.mergePatch({
         labels: selectorLabels,
       },
       spec: {
+        affinity: {
+          podAntiAffinity: {
+            preferredDuringSchedulingIgnoredDuringExecution: [
+              {
+                weight: 1,
+                podAffinityTerm: {
+                  labelSelector: {
+                    matchLabels: selectorLabels,
+                  },
+                  topologyKey: 'kubernetes.io/hostname',
+                },
+              },
+            ],
+          },
+        },
         containers: [
           std.mergePatch({
             name: 'clamav',

@@ -4,5 +4,6 @@ kind: ConfigMap
 metadata:
   labels:
     app: clamav-icap
+    instance: defaults
   name: clamav
   namespace: syn-icap-virusscan

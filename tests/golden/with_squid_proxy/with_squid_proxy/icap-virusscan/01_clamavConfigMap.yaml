@@ -4,5 +4,6 @@ kind: ConfigMap
 metadata:
   labels:
     app: clamav-icap
+    instance: with_squid_proxy
   name: clamav
   namespace: syn-icap-virusscan

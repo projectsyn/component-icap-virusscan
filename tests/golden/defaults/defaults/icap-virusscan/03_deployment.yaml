@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: clamav-icap
+    instance: defaults
   name: clamav-icap
   namespace: syn-icap-virusscan
 spec:
@@ -10,11 +11,23 @@ spec:
   selector:
     matchLabels:
       app: clamav-icap
+      instance: defaults
   template:
     metadata:
       labels:
         app: clamav-icap
+        instance: defaults
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: clamav-icap
+                    instance: defaults
+                topologyKey: kubernetes.io/hostname
+              weight: 1
       containers:
         - envFrom:
             - configMapRef:

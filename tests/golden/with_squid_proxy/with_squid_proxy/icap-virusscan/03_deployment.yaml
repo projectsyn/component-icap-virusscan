@@ -6,6 +6,7 @@ metadata:
   labels:
     add-label: from_with_squid_proxy
     app: clamav-icap
+    instance: with_squid_proxy
   name: clamav-icap
   namespace: syn-icap-virusscan
 spec:
@@ -13,6 +14,7 @@ spec:
   selector:
     matchLabels:
       app: clamav-icap
+      instance: with_squid_proxy
   template:
     metadata:
       annotations:
@@ -20,7 +22,18 @@ spec:
       labels:
         add-label: from_with_squid_proxy
         app: clamav-icap
+        instance: with_squid_proxy
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: clamav-icap
+                    instance: with_squid_proxy
+                topologyKey: kubernetes.io/hostname
+              weight: 1
       containers:
         - envFrom:
             - configMapRef:
