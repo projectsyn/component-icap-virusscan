@@ -30,7 +30,7 @@ data:
           annotations:
             add-annotation: "from_with_squid_proxy"
           labels:
-            add-label: "from_with_alias"
+            add-label: "from_with_squid_proxy"
         spec:
           template:
             metadata:
@@ -44,10 +44,10 @@ data:
           image: "ghcr.io/bacluc/squid:latest"
           resources:
             limits:
-              memory: "160Mi"
+              memory: "400Mi"
             requests:
               cpu: "100m"
-              memory: "80Mi"
+              memory: "210Mi"
         metadata:
           annotations:
             add-annotation: "from_with_squid_proxy"
