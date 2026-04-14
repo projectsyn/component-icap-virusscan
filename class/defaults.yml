@@ -3,6 +3,7 @@ parameters:
     =_metadata:
       multi_tenant: true
       multi_instance: true
+      multi_version: true
     namespace: syn-icap-virusscan
 
     debug: false
