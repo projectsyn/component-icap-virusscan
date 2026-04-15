@@ -4,14 +4,19 @@ parameters:
       multi_tenant: true
       multi_instance: true
       multi_version: true
-    namespace: ${_instance}
 
     debug: false
     test: false
-
+    namespace: ${_instance}
     createNamespace: true
     namespaceAnnotations: {}
     namespaceLabels: {}
+
+    # Enable ServiceMonitor, PrometheusRule, and all Keycloak statistics on
+    # the metrics endpoint by default.
+    monitoring:
+      enabled: true
+      rules: []
 
     enable_squid: false
     squid_domain:
@@ -104,10 +109,10 @@ parameters:
           image: "ghcr.io/bacluc/squid:latest"
           resources:
             requests:
-              cpu: '120m'
-              memory: '200Mi'
+              cpu: "120m"
+              memory: "200Mi"
             limits:
-              memory: '400Mi'
+              memory: "400Mi"
           livenessProbe:
             tcpSocket:
               port: 3128

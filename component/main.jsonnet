@@ -1,8 +1,10 @@
 // main template for icap-virusscan
+local com = import 'lib/commodore.libjsonnet';
 local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
-local inv = kap.inventory();
+local prometheus = import 'lib/prometheus.libsonnet';
 local sanitizedContainerLib = import 'lib/sanitizedContainer.libsonnet';
+local inv = kap.inventory();
 local sanitizedContainer = sanitizedContainerLib.sanitizedContainer;
 
 // The hiera parameters for the component
@@ -18,10 +20,21 @@ local selectorLabels = {
   instance: instance,
 };
 
-local namespace = kube.Namespace(params.namespace) {
+local namespace = (
+  if params.monitoring.enabled && std.member(inv.applications, 'prometheus') then
+    prometheus.RegisterNamespace(kube.Namespace(params.namespace))
+  else if params.monitoring.enabled && inv.parameters.facts.distribution == 'openshift4' then
+    kube.Namespace(params.namespace) {
+      metadata+: {
+        labels+: { 'openshift.io/cluster-monitoring': 'true' },
+      },
+    }
+  else
+    kube.Namespace(params.namespace)
+) + {
   metadata+: {
-    labels+: params.namespaceLabels,
-    annotations+: params.namespaceAnnotations,
+    labels+: com.makeMergeable(params.namespaceLabels),
+    annotations+: com.makeMergeable(params.namespaceAnnotations),
   },
 };
 
@@ -98,7 +111,7 @@ local deployment = std.mergePatch({
         containers: [
           std.mergePatch({
             name: 'clamav',
-            ports: [ { name: 'clamav', containerPort: 3310 } ],
+            ports: [{ name: 'clamav', containerPort: 3310 }],
             envFrom: [
               {
                 configMapRef: {
@@ -109,7 +122,7 @@ local deployment = std.mergePatch({
           }, sanitizedContainer(deploymentParams.container_clamav)),
           std.mergePatch({
             name: 'c-icap',
-            ports: [ cIcapContainerPort ],
+            ports: [cIcapContainerPort],
             envFrom: [
               {
                 configMapRef: {
@@ -177,7 +190,7 @@ local networkPolicies = {
     podSelector: {
       matchLabels: selectorLabels,
     },
-    policyTypes: [ 'Ingress' ],
+    policyTypes: ['Ingress'],
     ingress: [
       {
         from: [
