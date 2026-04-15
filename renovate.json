@@ -37,6 +37,30 @@
         "automerge",
         "bump:patch"
       ]
+    },
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "automerge": true,
+      "platformAutomerge": false,
+      "matchDatasources": [
+        "docker"
+      ],
+      "labels": []
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/.*.ya?ml/"
+      ],
+      "matchStrings": [
+        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\\s.*(image): \"(?<currentValue>.*)\"\\s"
+      ]
     }
   ]
 }

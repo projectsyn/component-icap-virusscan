@@ -18,7 +18,7 @@ data:
     deployments:
       clamav-icap:
         container_cicap:
-          image: "ghcr.io/bacluc/c-icap:latest"
+          image: "escaped/image"
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
@@ -48,7 +48,7 @@ data:
               port: 1344
             timeoutSeconds: 5
         container_clamav:
-          image: "ghcr.io/bacluc/clamav:latest"
+          image: "escaped/image"
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
@@ -96,7 +96,7 @@ data:
             spec: {}
       squid:
         container_squid:
-          image: "ghcr.io/bacluc/squid:latest"
+          image: "escaped/image"
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
@@ -149,6 +149,7 @@ data:
     namespaceLabels: {}
     replicas: 2
     squid_domain: "test-icap-virusscan.apps.c-hin-test-rma1.hin-infra.ch"
+    test: true
 kind: ConfigMap
 metadata:
   name: debug-configmap
