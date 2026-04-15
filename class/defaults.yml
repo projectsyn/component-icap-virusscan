@@ -101,7 +101,7 @@ parameters:
             spec: {}
         container_squid:
           # renovate: datasource=docker depName=ghcr.io/bacluc
-          image: "ghcr.io/bacluc/squid:1"
+          image: "ghcr.io/bacluc/squid:latest"
           resources:
             requests:
               cpu: '120m'
