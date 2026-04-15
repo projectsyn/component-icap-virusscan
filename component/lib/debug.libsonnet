@@ -4,6 +4,27 @@ local params = inv.parameters.icap_virusscan;
 
 local instance = inv.parameters._instance;
 
+local sanitizedParams = std.mergePatch(
+  params,
+  {
+    [if params.test then 'deployments']: {
+      'clamav-icap': {
+        container_cicap: {
+          image: 'escaped/image',
+        },
+        container_clamav: {
+          image: 'escaped/image',
+        },
+      },
+      squid: {
+        container_squid: {
+          image: 'escaped/image',
+        },
+      },
+    },
+  }
+);
+
 
 local configMap = {
   apiVersion: 'v1',
@@ -15,7 +36,7 @@ local configMap = {
   data: {
     debug: |||
       %s
-    ||| % [ std.manifestYamlDoc(params, indent_array_in_object=false, quote_keys=false) ],
+    ||| % [ std.manifestYamlDoc(sanitizedParams, indent_array_in_object=false, quote_keys=false) ],
   },
 };
 

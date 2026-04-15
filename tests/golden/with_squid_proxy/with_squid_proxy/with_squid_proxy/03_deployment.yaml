@@ -42,7 +42,7 @@ spec:
         - envFrom:
             - configMapRef:
                 name: clamav
-          image: ghcr.io/bacluc/clamav:latest
+          image: escaped/image
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
@@ -78,7 +78,7 @@ spec:
         - envFrom:
             - configMapRef:
                 name: c-icap
-          image: ghcr.io/bacluc/c-icap:latest
+          image: escaped/image
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5

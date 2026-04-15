@@ -2,6 +2,9 @@
 local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
 local inv = kap.inventory();
+local sanitizedContainerLib = import 'lib/sanitizedContainer.libsonnet';
+local sanitizedContainer = sanitizedContainerLib.sanitizedContainer;
+
 // The hiera parameters for the component
 local params = inv.parameters.icap_virusscan;
 
@@ -103,7 +106,7 @@ local deployment = std.mergePatch({
                 },
               },
             ],
-          }, deploymentParams.container_clamav),
+          }, sanitizedContainer(deploymentParams.container_clamav)),
           std.mergePatch({
             name: 'c-icap',
             ports: [ cIcapContainerPort ],
@@ -114,7 +117,7 @@ local deployment = std.mergePatch({
                 },
               },
             ],
-          }, deploymentParams.container_cicap),
+          }, sanitizedContainer(deploymentParams.container_cicap)),
         ],
       },
     },

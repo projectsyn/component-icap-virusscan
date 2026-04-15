@@ -1,4 +1,6 @@
 local kap = import 'lib/kapitan.libjsonnet';
+local sanitizedContainerLib = import 'sanitizedContainer.libsonnet';
+local sanitizedContainer = sanitizedContainerLib.sanitizedContainer;
 local inv = kap.inventory();
 local params = inv.parameters.icap_virusscan;
 
@@ -60,7 +62,7 @@ local deployment = std.mergePatch({
                 },
               },
             ],
-          }, deploymentParams.container_squid),
+          }, sanitizedContainer(deploymentParams.container_squid)),
         ],
       },
     },

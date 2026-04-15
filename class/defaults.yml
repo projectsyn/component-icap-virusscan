@@ -7,6 +7,7 @@ parameters:
     namespace: syn-icap-virusscan
 
     debug: false
+    test: false
 
     createNamespace: true
     namespaceAnnotations: {}
@@ -32,7 +33,8 @@ parameters:
           template:
             spec: {}
         container_cicap:
-          image: "ghcr.io/bacluc/c-icap:1"
+          # renovate: datasource=docker depName=ghcr.io/vshn/c-icap
+          image: "ghcr.io/vshn/c-icap:20260414-151901"
           resources:
             requests:
               cpu: "120m"
@@ -62,7 +64,8 @@ parameters:
             timeoutSeconds: 5
             failureThreshold: 3
         container_clamav:
-          image: "ghcr.io/bacluc/clamav:1"
+          # renovate: datasource=docker depName=ghcr.io/vshn/clamav
+          image: "ghcr.io/vshn/clamav:20260414-150513"
           resources:
             requests:
               cpu: "120m"
@@ -97,6 +100,7 @@ parameters:
           template:
             spec: {}
         container_squid:
+          # renovate: datasource=docker depName=ghcr.io/bacluc
           image: "ghcr.io/bacluc/squid:1"
           resources:
             requests:
