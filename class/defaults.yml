@@ -4,7 +4,7 @@ parameters:
       multi_tenant: true
       multi_instance: true
       multi_version: true
-    namespace: syn-icap-virusscan
+    namespace: ${_instance}
 
     debug: false
     test: false

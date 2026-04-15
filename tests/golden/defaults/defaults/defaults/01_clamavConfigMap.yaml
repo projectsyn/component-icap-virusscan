@@ -6,4 +6,4 @@ metadata:
     app: clamav-icap
     instance: defaults
   name: clamav
-  namespace: syn-icap-virusscan
+  namespace: defaults

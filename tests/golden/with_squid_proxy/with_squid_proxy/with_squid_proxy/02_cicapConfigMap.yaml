@@ -8,4 +8,4 @@ metadata:
     app: clamav-icap
     instance: with_squid_proxy
   name: c-icap
-  namespace: syn-icap-virusscan
+  namespace: with_squid_proxy

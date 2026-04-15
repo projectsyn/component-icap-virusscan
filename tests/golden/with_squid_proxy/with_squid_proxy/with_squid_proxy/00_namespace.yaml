@@ -3,5 +3,5 @@ kind: Namespace
 metadata:
   annotations: {}
   labels:
-    name: syn-icap-virusscan
-  name: syn-icap-virusscan
+    name: with_squid_proxy
+  name: with_squid_proxy
