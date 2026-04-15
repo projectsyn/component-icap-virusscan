@@ -4,7 +4,7 @@ metadata:
   labels:
     app: squid
   name: squid
-  namespace: syn-icap-virusscan
+  namespace: with_squid_proxy
 spec:
   ports:
     - name: squid

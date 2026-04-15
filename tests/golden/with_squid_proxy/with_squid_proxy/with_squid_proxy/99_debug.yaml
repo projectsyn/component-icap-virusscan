@@ -136,7 +136,7 @@ data:
         CLAMD_MAXSIZE: "50m"
       clamav: {}
     minAvailable: 1
-    namespace: "syn-icap-virusscan"
+    namespace: "with_squid_proxy"
     namespaceAnnotations: {}
     namespaceLabels: {}
     replicas: 2
@@ -144,4 +144,4 @@ data:
 kind: ConfigMap
 metadata:
   name: debug-configmap
-  namespace: syn-icap-virusscan
+  namespace: with_squid_proxy

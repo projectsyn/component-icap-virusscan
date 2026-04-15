@@ -3,9 +3,9 @@ kind: Service
 metadata:
   labels:
     app: clamav-icap
-    instance: with_squid_proxy
+    instance: defaults
   name: icap
-  namespace: syn-icap-virusscan
+  namespace: defaults
 spec:
   ports:
     - name: icap
@@ -14,5 +14,5 @@ spec:
       targetPort: icap
   selector:
     app: clamav-icap
-    instance: with_squid_proxy
+    instance: defaults
   type: ClusterIP
