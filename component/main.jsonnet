@@ -163,8 +163,7 @@ local service = {
   },
 };
 
-local hasNetworkPolicies = std.isArray(params.allowFromNamespaces) &&
-                           (std.length(params.allowFromNamespaces) > 0);
+local hasNetworkPolicies = std.length(params.allowFromNamespaces) > 0;
 
 local networkPolicies = {
   apiVersion: 'networking.k8s.io/v1',
