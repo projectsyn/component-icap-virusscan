@@ -125,3 +125,11 @@ parameters:
             periodSeconds: 5
             timeoutSeconds: 5
             failureThreshold: 3
+    allowFromNamespaces: []
+#      - matchLabels:
+#          app: frontend
+#      - matchExpressions:
+#          - key: env
+#            operator: In
+#            values:
+#              - prod

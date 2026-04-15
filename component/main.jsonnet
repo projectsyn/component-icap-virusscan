@@ -57,6 +57,8 @@ local sanitizedDeploymentParams = {
   spec: deploymentParams.spec,
 };
 
+local cIcapContainerPort = { name: 'icap', containerPort: 1344 };
+
 local deployment = std.mergePatch({
   apiVersion: 'apps/v1',
   kind: 'Deployment',
@@ -104,7 +106,7 @@ local deployment = std.mergePatch({
           }, deploymentParams.container_clamav),
           std.mergePatch({
             name: 'c-icap',
-            ports: [ { name: 'icap', containerPort: 1344 } ],
+            ports: [ cIcapContainerPort ],
             envFrom: [
               {
                 configMapRef: {
@@ -158,6 +160,39 @@ local service = {
   },
 };
 
+local hasNetworkPolicies = std.isArray(params.allowFromNamespaces) &&
+                           (std.length(params.allowFromNamespaces) > 0);
+
+local networkPolicies = {
+  apiVersion: 'networking.k8s.io/v1',
+  kind: 'NetworkPolicy',
+  metadata: {
+    name: 'allow-connection-to-cicap',
+    namespace: params.namespace,
+    labels: selectorLabels,
+  },
+  spec: {
+    podSelector: {
+      matchLabels: selectorLabels,
+    },
+    policyTypes: [ 'Ingress' ],
+    ingress: [
+      {
+        from: [
+          { namespaceSelector: ns }
+          for ns in params.allowFromNamespaces
+        ],
+        ports: [
+          {
+            protocol: 'TCP',
+            port: cIcapContainerPort.containerPort,
+          },
+        ],
+      },
+    ],
+  },
+};
+
 {
   [if params.createNamespace then '00_namespace']: namespace,
   '01_clamavConfigMap': clamavConfigMap,
@@ -165,5 +200,6 @@ local service = {
   '03_deployment': deployment,
   [if params.replicas > 1 then '04_podDiscuptionBudget']: podDisruptionBudget,
   '05_service': service,
+  [if hasNetworkPolicies then '06_networkPolicies']: networkPolicies,
 } + (import 'lib/testSetup.libsonnet')
 + (import 'lib/debug.libsonnet')
