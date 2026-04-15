@@ -5,6 +5,14 @@ data:
       multi_instance: true
       multi_tenant: true
       multi_version: true
+    allowFromNamespaces:
+    - matchLabels:
+        kubernetes.io/metadata.name: "vshn-airlock-dev-01"
+    - matchExpressions:
+      - key: "env"
+        operator: "In"
+        values:
+        - "prod"
     createNamespace: true
     debug: true
     deployments:
