@@ -2,8 +2,6 @@ local kap = import 'lib/kapitan.libjsonnet';
 local inv = kap.inventory();
 local params = inv.parameters.icap_virusscan;
 
-local instance = inv.parameters._instance;
-
 local sanitizedParams = std.mergePatch(
   params,
   {
