@@ -25,34 +25,6 @@ local namespace = kube.Namespace(params.namespace) {
   },
 };
 
-local clamavConfigMap = {
-  apiVersion: 'v1',
-  kind: 'ConfigMap',
-  metadata: {
-    name: clamavConfigMapName,
-    namespace: params.namespace,
-    labels: selectorLabels,
-  },
-  data: {
-    [key]: params.env.clamav[key]
-    for key in std.objectFields(params.env.clamav)
-  },
-};
-
-local cIcapConfigMap = {
-  apiVersion: 'v1',
-  kind: 'ConfigMap',
-  metadata: {
-    name: cIcapConfigMapName,
-    namespace: params.namespace,
-    labels: selectorLabels,
-  },
-  data: {
-    [key]: params.env['c-icap'][key]
-    for key in std.objectFields(params.env['c-icap'])
-  },
-};
-
 local deploymentParams = params.deployments['clamav-icap'];
 
 local sanitizedDeploymentParams = {
@@ -99,23 +71,23 @@ local deployment = std.mergePatch({
           std.mergePatch({
             name: 'clamav',
             ports: [ { name: 'clamav', containerPort: 3310 } ],
-            envFrom: [
+            env: [
               {
-                configMapRef: {
-                  name: clamavConfigMapName,
-                },
-              },
+                name: key,
+                value: '%s' % params.env.clamav[key],
+              }
+              for key in std.objectFields(params.env.clamav)
             ],
           }, sanitizedContainer(deploymentParams.container_clamav)),
           std.mergePatch({
             name: 'c-icap',
             ports: [ cIcapContainerPort ],
-            envFrom: [
+            env: [
               {
-                configMapRef: {
-                  name: cIcapConfigMapName,
-                },
-              },
+                name: key,
+                value: '%s' % params.env['c-icap'][key],
+              }
+              for key in std.objectFields(params.env['c-icap'])
             ],
           }, sanitizedContainer(deploymentParams.container_cicap)),
         ],
@@ -197,11 +169,9 @@ local networkPolicies = {
 
 {
   [if params.createNamespace then '00_namespace']: namespace,
-  '01_clamavConfigMap': clamavConfigMap,
-  '02_cicapConfigMap': cIcapConfigMap,
-  '03_deployment': deployment,
-  [if params.replicas > 1 then '04_podDisruptionBudget']: podDisruptionBudget,
-  '05_service': service,
-  [if hasNetworkPolicies then '06_networkPolicies']: networkPolicies,
+  '01_deployment': deployment,
+  [if params.replicas > 1 then '02_podDisruptionBudget']: podDisruptionBudget,
+  '03_service': service,
+  [if hasNetworkPolicies then '04_networkPolicies']: networkPolicies,
 } + (import 'lib/testSetup.libsonnet')
 + (import 'lib/debug.libsonnet')
