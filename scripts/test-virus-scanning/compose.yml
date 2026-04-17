@@ -1,0 +1,8 @@
+services:
+  python-http-client:
+    build:
+      context: python-http-client
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
