@@ -59,6 +59,9 @@ local nginxDeployment = std.mergePatch({
     template: {
       metadata: {
         labels: nginxLabels,
+        annotations: {
+            'checksum/config': std.sha256(std.manifestJsonMinified(nginxConfigMap))
+        }
       },
       spec: {
         containers: [
@@ -109,24 +112,6 @@ local nginxService = {
 
 local selectorLabels = { app: 'squid' };
 
-local configMap = {
-  apiVersion: 'v1',
-  kind: 'ConfigMap',
-  metadata: {
-    name: 'squid-configmap',
-    namespace: params.namespace,
-    labels: selectorLabels,
-  },
-  data: {
-    ICAP_SERVICE_CONFIG: |||
-      icap_service service_avi_1 reqmod_precache icap://icap.%s.svc.cluster.local:80/squidclamav bypass=on on-overload=bypass
-      adaptation_service_set avi service_avi_1
-      adaptation_access avi allow all
-    ||| % [ params.namespace ],
-    UPSTREAM_HOST: '%s.%s.svc.cluster.local' % [ nginxService.metadata.name, nginxService.metadata.namespace ],
-  },
-};
-
 local deploymentParams = params.deployments.squid;
 
 local sanitizedDeploymentParams = {
@@ -156,13 +141,20 @@ local deployment = std.mergePatch({
           std.mergePatch({
             name: 'squid',
             ports: [ { name: 'http', containerPort: 3128 } ],
-            envFrom: [
-              {
-                configMapRef: {
-                  name: configMap.metadata.name,
+            env: [
+                {
+                    name: 'ICAP_SERVICE_CONFIG',
+                    value: |||
+                             icap_service service_avi_1 reqmod_precache icap://icap.%s.svc.cluster.local:80/squidclamav bypass=on on-overload=bypass
+                             adaptation_service_set avi service_avi_1
+                             adaptation_access avi allow all
+                           ||| % [ params.namespace ],
                 },
-              },
-            ],
+                {
+                  name: 'UPSTREAM_HOST',
+                  value: '%s.%s.svc.cluster.local' % [ nginxService.metadata.name, nginxService.metadata.namespace ],
+                }
+            ]
           }, sanitizedContainer(deploymentParams.container_squid)),
         ],
       },
@@ -325,16 +317,15 @@ local egressNetworkPolicy = {
 local hasHttpRoute = std.isString(params.squid_domain) && params.httproute.enabled;
 
 local squidManifests = {
-  '50_squid-configmap': configMap,
-  '51_squid-deployment': deployment,
-  '52_squid-service': service,
-  [if hasHttpRoute then '53_squid-httproute']: httpRoute,
-  [if hasHttpRoute then '54_squid-ingressNetworkPolicy']: ingressNetworkPolicy,
-  '55_squid-nginx-configMap': nginxConfigMap,
-  '56_squid-nginx-deployment': nginxDeployment,
-  '57_squid-nginx-service': nginxService,
-  [if hasHttpRoute then '58_squid-referenceGrant']: referenceGrant,
-  [if hasHttpRoute then '59_squid-egressNetworkPolicy']: egressNetworkPolicy,
+  '50_squid-deployment': deployment,
+  '51_squid-service': service,
+  [if hasHttpRoute then '52_squid-httproute']: httpRoute,
+  [if hasHttpRoute then '53_squid-ingressNetworkPolicy']: ingressNetworkPolicy,
+  '54_squid-nginx-configMap': nginxConfigMap,
+  '55_squid-nginx-deployment': nginxDeployment,
+  '56_squid-nginx-service': nginxService,
+  [if hasHttpRoute then '57_squid-referenceGrant']: referenceGrant,
+  [if hasHttpRoute then '58_squid-egressNetworkPolicy']: egressNetworkPolicy,
 };
 
 if params.enable_squid then squidManifests else {}

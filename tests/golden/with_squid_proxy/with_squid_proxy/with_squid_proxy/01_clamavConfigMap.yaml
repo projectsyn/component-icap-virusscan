@@ -1,9 +1,0 @@
-apiVersion: v1
-data: {}
-kind: ConfigMap
-metadata:
-  labels:
-    app: clamav-icap
-    instance: with_squid_proxy
-  name: clamav
-  namespace: with_squid_proxy

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    add-annotation: from_with_squid_proxy
+  labels:
+    add-label: from_with_squid_proxy
+    app: squid
+  name: squid
+  namespace: with_squid_proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: squid
+  template:
+    metadata:
+      annotations:
+        add-annotation: from_with_squid_proxy
+      labels:
+        add-label: from_with_squid_proxy
+        app: squid
+    spec:
+      containers:
+        - env:
+            - name: ICAP_SERVICE_CONFIG
+              value: |
+                icap_service service_avi_1 reqmod_precache icap://icap.with_squid_proxy.svc.cluster.local:80/squidclamav bypass=on on-overload=bypass
+                adaptation_service_set avi service_avi_1
+                adaptation_access avi allow all
+            - name: UPSTREAM_HOST
+              value: nginx-return-200.with_squid_proxy.svc.cluster.local
+          image: escaped/image
+          livenessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            tcpSocket:
+              port: 3128
+            timeoutSeconds: 5
+          name: squid
+          ports:
+            - containerPort: 3128
+              name: http
+          readinessProbe:
+            failureThreshold: 1
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 3128
+            timeoutSeconds: 3
+          resources:
+            limits:
+              memory: 400Mi
+            requests:
+              cpu: 100m
+              memory: 210Mi
+          startupProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            tcpSocket:
+              port: 3128
+            timeoutSeconds: 5

@@ -177,9 +177,11 @@ data:
     enable_squid: true
     env:
       c-icap:
+        ANOTHER_TEST: false
         CLAMD_IP: "127.0.0.1"
         CLAMD_MAXSIZE: "50m"
-      clamav: {}
+      clamav:
+        TEST: true
     httproute:
       enabled: true
       gatewayClassName: "microgateway-cloudscale"
