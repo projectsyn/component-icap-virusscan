@@ -4,9 +4,6 @@ local sanitizedContainer = sanitizedContainerLib.sanitizedContainer;
 local inv = kap.inventory();
 local params = inv.parameters.icap_virusscan;
 
-local instance = inv.parameters._instance;
-
-
 local selectorLabels = { app: 'squid' };
 
 local configMap = {
