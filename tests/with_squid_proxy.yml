@@ -4,6 +4,10 @@ parameters:
     test: true
     enable_squid: true
     squid_domain: test-icap-virusscan.apps.c-hin-test-rma1.hin-infra.ch
+    httproute:
+      enabled: true
+      gatewayName: gateway-dev
+      gatewayNamespace: gateway-dev-ns
     deployments:
       clamav-icap:
         metadata:
@@ -46,7 +50,7 @@ parameters:
                 add-annotation: "from_with_squid_proxy"
         container_squid:
           # renovate: datasource=docker depName=ghcr.io/bacluc/squid
-          image: "ghcr.io/bacluc/squid:latest"
+          image: "ghcr.io/bacluc/squid:2"
           resources:
             requests:
               cpu: '100m'
