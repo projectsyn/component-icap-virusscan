@@ -200,7 +200,7 @@ local networkPolicies = {
   '01_clamavConfigMap': clamavConfigMap,
   '02_cicapConfigMap': cIcapConfigMap,
   '03_deployment': deployment,
-  [if params.replicas > 1 then '04_podDiscuptionBudget']: podDisruptionBudget,
+  [if params.replicas > 1 then '04_podDisruptionBudget']: podDisruptionBudget,
   '05_service': service,
   [if hasNetworkPolicies then '06_networkPolicies']: networkPolicies,
 } + (import 'lib/testSetup.libsonnet')
