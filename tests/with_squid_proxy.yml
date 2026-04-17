@@ -4,6 +4,11 @@ parameters:
     test: true
     enable_squid: true
     squid_domain: test-icap-virusscan.apps.c-hin-test-rma1.hin-infra.ch
+    env:
+      clamav:
+        TEST: true
+      c-icap:
+        ANOTHER_TEST: false
     httproute:
       enabled: true
       gatewayName: gateway-dev

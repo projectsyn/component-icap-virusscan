@@ -1,26 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+    add-annotation: from_with_squid_proxy
   labels:
+    add-label: from_with_squid_proxy
     app: clamav-icap
-    instance: defaults
+    instance: with_squid_proxy
   name: clamav-icap
-  namespace: defaults
+  namespace: with_squid_proxy
 spec:
   replicas: 2
   selector:
     matchLabels:
       app: clamav-icap
-      instance: defaults
+      instance: with_squid_proxy
   strategy:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
   template:
     metadata:
+      annotations:
+        add-annotation: from_with_squid_proxy
       labels:
+        add-label: from_with_squid_proxy
         app: clamav-icap
-        instance: defaults
+        instance: with_squid_proxy
     spec:
       affinity:
         podAntiAffinity:
@@ -29,13 +35,13 @@ spec:
                 labelSelector:
                   matchLabels:
                     app: clamav-icap
-                    instance: defaults
+                    instance: with_squid_proxy
                 topologyKey: kubernetes.io/hostname
               weight: 1
       containers:
-        - envFrom:
-            - configMapRef:
-                name: clamav
+        - env:
+            - name: TEST
+              value: 'true'
           image: escaped/image
           livenessProbe:
             failureThreshold: 3
@@ -58,7 +64,7 @@ spec:
           resources:
             limits:
               cpu: 2000m
-              memory: 3072Mi
+              memory: 4072Mi
             requests:
               cpu: 120m
               memory: 1280Mi
@@ -69,9 +75,13 @@ spec:
             tcpSocket:
               port: 3310
             timeoutSeconds: 5
-        - envFrom:
-            - configMapRef:
-                name: c-icap
+        - env:
+            - name: ANOTHER_TEST
+              value: 'false'
+            - name: CLAMD_IP
+              value: 127.0.0.1
+            - name: CLAMD_MAXSIZE
+              value: 50m
           image: escaped/image
           livenessProbe:
             failureThreshold: 3
@@ -96,7 +106,7 @@ spec:
               cpu: 500m
               memory: 500Mi
             requests:
-              cpu: 120m
+              cpu: 100m
               memory: 200Mi
           startupProbe:
             failureThreshold: 3
