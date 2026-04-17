@@ -39,17 +39,19 @@
       ]
     },
     {
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ],
       "automerge": true,
       "platformAutomerge": false,
       "matchDatasources": [
         "docker"
       ],
       "labels": []
+    },
+    {
+      "matchDepNames": [
+        "vshn/c-icap",
+        "vshn/clamav"
+      ],
+      "versioning": "loose"
     }
   ],
   "customManagers": [
@@ -59,7 +61,7 @@
         "/.*.ya?ml/"
       ],
       "matchStrings": [
-        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\\s.*(image): \"(?<currentValue>.*)\"\\s"
+        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\\s.*(image): [^:]*:(?<currentValue>.*)\"\\s"
       ]
     }
   ]
