@@ -4,6 +4,109 @@ local sanitizedContainer = sanitizedContainerLib.sanitizedContainer;
 local inv = kap.inventory();
 local params = inv.parameters.icap_virusscan;
 
+local nginxLabels = { app: 'nginx' };
+
+local nginxConfigEntryName = 'default.conf';
+
+local nginxConfigMap = {
+  apiVersion: 'v1',
+  kind: 'ConfigMap',
+  metadata: {
+    name: 'squid-nginx-configmap',
+    namespace: params.namespace,
+    labels: nginxLabels,
+  },
+  data: {
+    [nginxConfigEntryName]: |||
+      server {
+        listen 8080;
+
+        location / {
+          return 200;
+        }
+      }
+    |||,
+  },
+};
+
+local nginxConfigMapVolume = {
+  name: 'nginx-conf',
+  configMap: {
+    name: nginxConfigMap.metadata.name,
+  },
+};
+
+local nginxDeploymentParams = params.deployments['squid-nginx'];
+
+local sanitizedNginxDeploymentParams = {
+  metadata: nginxDeploymentParams.metadata,
+  spec: nginxDeploymentParams.spec,
+};
+
+local nginxDeployment = std.mergePatch({
+  apiVersion: 'apps/v1',
+  kind: 'Deployment',
+  metadata: {
+    name: 'nginx',
+    namespace: params.namespace,
+    labels: nginxLabels,
+  },
+  spec: {
+    replicas: 1,
+    selector: {
+      matchLabels: nginxLabels,
+    },
+    template: {
+      metadata: {
+        labels: nginxLabels,
+      },
+      spec: {
+        containers: [
+          std.mergePatch({
+            name: 'nginx',
+            ports: [
+              { name: 'http', containerPort: 8080 },
+            ],
+            volumeMounts: [
+              {
+                mountPath: '/etc/nginx/conf.d/default.conf',
+                name: nginxConfigMapVolume.name,
+                subPath: nginxConfigEntryName,
+              },
+            ],
+          }, sanitizedContainer(nginxDeploymentParams.container_nginx)),
+        ],
+
+        volumes: [
+          nginxConfigMapVolume,
+        ],
+      },
+    },
+  },
+}, sanitizedNginxDeploymentParams);
+
+local nginxService = {
+  apiVersion: 'v1',
+  kind: 'Service',
+  metadata: {
+    name: 'nginx-return-200',
+    namespace: params.namespace,
+    labels: nginxLabels,
+  },
+  spec: {
+    type: 'ClusterIP',
+    selector: nginxLabels,
+    ports: [
+      {
+        name: 'nginx',
+        port: 80,
+        targetPort: 'http',
+        protocol: 'TCP',
+      },
+    ],
+  },
+};
+
 local selectorLabels = { app: 'squid' };
 
 local configMap = {
@@ -20,6 +123,7 @@ local configMap = {
       adaptation_service_set avi service_avi_1
       adaptation_access avi allow all
     ||| % [ params.namespace ],
+    UPSTREAM_HOST: '%s.%s.svc.cluster.local' % [ nginxService.metadata.name, nginxService.metadata.namespace ],
   },
 };
 
@@ -88,51 +192,149 @@ local service = {
   },
 };
 
-local ingress = {
-  apiVersion: 'networking.k8s.io/v1',
-  kind: 'Ingress',
+local httpRoute = {
+  apiVersion: 'gateway.networking.k8s.io/v1',
+  kind: 'HTTPRoute',
   metadata: {
-    annotations: {
-      'route.openshift.io/insecureEdgeTerminationPolicy': 'Redirect',
-      'route.openshift.io/termination': 'edge',
-    },
-    labels: {
-      'app.hin-infra.ch/ingress-public': 'true',
-    },
-    name: 'squid-ingress',
-    namespace: params.namespace,
+    name: 'squid-httproute',
+    namespace: params.httproute.gatewayNamespace,
   },
   spec: {
-    ingressClassName: 'openshift-public',
+    hostnames: [ params.squid_domain ],
+    parentRefs: [
+      {
+        group: 'gateway.networking.k8s.io',
+        kind: 'Gateway',
+        name: params.httproute.gatewayName,
+        namespace: params.httproute.gatewayNamespace,
+        sectionName: params.httproute.sectionName,
+      },
+    ],
     rules: [
       {
-        host: params.squid_domain,
-        http: {
-          paths: [
-            {
-              backend: {
-                service: {
-                  name: 'squid',
-                  port: {
-                    number: 80,
-                  },
-                },
-              },
-              path: '/',
-              pathType: 'Prefix',
+        matches: [
+          {
+            path: {
+              type: 'PathPrefix',
+              value: '/',
             },
-          ],
+          },
+        ],
+        backendRefs: [
+          {
+            group: '',
+            kind: 'Service',
+            name: service.metadata.name,
+            namespace: params.namespace,
+            port: 80,
+            weight: 1,
+          },
+        ],
+        timeouts: {
+          backendRequest: '0s',
         },
       },
     ],
   },
 };
 
+local referenceGrant = {
+  apiVersion: 'gateway.networking.k8s.io/v1beta1',
+  kind: 'ReferenceGrant',
+  metadata: {
+    name: 'allow-squid-service',
+    namespace: params.namespace,
+  },
+  spec: {
+    from: [
+      {
+        group: 'gateway.networking.k8s.io',
+        kind: 'HTTPRoute',
+        namespace: params.httproute.gatewayNamespace,
+      },
+    ],
+    to: [
+      {
+        group: '',
+        kind: 'Service',
+        name: service.metadata.name,
+      },
+    ],
+  },
+};
+
+local ingressNetworkPolicy = {
+  apiVersion: 'networking.k8s.io/v1',
+  kind: 'NetworkPolicy',
+  metadata: {
+    name: 'squid-allow-gateway',
+    namespace: params.namespace,
+  },
+  spec: {
+    podSelector: {
+      matchLabels: selectorLabels,
+    },
+    policyTypes: [ 'Ingress' ],
+    ingress: [
+      {
+        from: [
+          {
+            namespaceSelector: {
+              matchLabels: {
+                'kubernetes.io/metadata.name': params.httproute.gatewayNamespace,
+              },
+            },
+          },
+        ],
+      },
+    ],
+  },
+};
+
+local egressNetworkPolicy = {
+  apiVersion: 'networking.k8s.io/v1',
+  kind: 'NetworkPolicy',
+  metadata: {
+    name: 'allow-%s' % params.namespace,
+    namespace: params.httproute.gatewayNamespace,
+  },
+  spec: {
+    podSelector: {
+      matchLabels: {
+        'gateway.networking.k8s.io/gateway-class-name': params.httproute.gatewayClassName,
+        'gateway.networking.k8s.io/gateway-name': params.httproute.gatewayName,
+      },
+    },
+    policyTypes: [ 'Egress' ],
+    egress: [
+      {
+        to: [
+          {
+            namespaceSelector: {
+              matchLabels: {
+                'kubernetes.io/metadata.name': params.namespace,
+              },
+            },
+          },
+        ],
+      },
+    ],
+  },
+};
+
+local hasHttpRoute = std.isString(params.squid_domain) && params.httproute.enabled;
+
 local squidManifests = {
   '50_squid-configmap': configMap,
   '51_squid-deployment': deployment,
   '52_squid-service': service,
-  [if std.isString(params.squid_domain) then '53_ingress']: ingress,
+  [if hasHttpRoute then '53_squid-httproute']: httpRoute,
+  [if hasHttpRoute then '54_squid-ingressNetworkPolicy']: ingressNetworkPolicy,
+  '55_squid-nginx-configMap': nginxConfigMap,
+  '56_squid-nginx-deployment': nginxDeployment,
+  '57_squid-nginx-service': nginxService,
+  [if hasHttpRoute then '58_squid-referenceGrant']: referenceGrant,
+  [if hasHttpRoute then '59_squid-egressNetworkPolicy']: egressNetworkPolicy,
 };
 
 if params.enable_squid then squidManifests else {}

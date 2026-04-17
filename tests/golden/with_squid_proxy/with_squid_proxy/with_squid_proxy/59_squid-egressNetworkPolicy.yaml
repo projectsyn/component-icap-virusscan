@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-with_squid_proxy
+  namespace: gateway-dev-ns
+spec:
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: with_squid_proxy
+  podSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-class-name: microgateway-cloudscale
+      gateway.networking.k8s.io/gateway-name: gateway-dev
+  policyTypes:
+    - Egress

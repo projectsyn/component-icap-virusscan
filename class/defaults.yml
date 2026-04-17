@@ -15,6 +15,12 @@ parameters:
 
     enable_squid: false
     squid_domain:
+    httproute:
+      enabled: false
+      gatewayClassName: microgateway-cloudscale
+      gatewayName:
+      gatewayNamespace:
+      sectionName: http-default
     replicas: 2
     minAvailable: 1
     env:
@@ -101,7 +107,7 @@ parameters:
             spec: {}
         container_squid:
           # renovate: datasource=docker depName=ghcr.io/bacluc
-          image: "ghcr.io/bacluc/squid:latest"
+          image: "ghcr.io/bacluc/squid:2"
           resources:
             requests:
               cpu: '120m'
@@ -125,6 +131,44 @@ parameters:
           startupProbe:
             tcpSocket:
               port: 3128
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+      squid-nginx:
+        metadata: {}
+        spec:
+          template:
+            spec: {}
+        container_nginx:
+          # renovate: datasource=docker depName=ghcr.io/nginx/nginx-unprivileged
+          image: "ghcr.io/nginx/nginx-unprivileged:1.29.8-alpine3.23"
+          resources:
+            requests:
+              cpu: '50m'
+              memory: '50Mi'
+            limits:
+              memory: '100Mi'
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 1
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
             initialDelaySeconds: 0
             periodSeconds: 5
             timeoutSeconds: 5

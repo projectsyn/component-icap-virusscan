@@ -137,12 +137,55 @@ data:
               labels:
                 add-label: "from_with_squid_proxy"
             spec: {}
+      squid-nginx:
+        container_nginx:
+          image: "ghcr.io/nginx/nginx-unprivileged:1.29.8-alpine3.23"
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: "/"
+              port: "http"
+            periodSeconds: 5
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: "/"
+              port: "http"
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 3
+          resources:
+            limits:
+              memory: "100Mi"
+            requests:
+              cpu: "50m"
+              memory: "50Mi"
+          startupProbe:
+            failureThreshold: 3
+            httpGet:
+              path: "/"
+              port: "http"
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 5
+        metadata: {}
+        spec:
+          template:
+            spec: {}
     enable_squid: true
     env:
       c-icap:
         CLAMD_IP: "127.0.0.1"
         CLAMD_MAXSIZE: "50m"
       clamav: {}
+    httproute:
+      enabled: true
+      gatewayClassName: "microgateway-cloudscale"
+      gatewayName: "gateway-dev"
+      gatewayNamespace: "gateway-dev-ns"
+      sectionName: "http-default"
     minAvailable: 1
     namespace: "with_squid_proxy"
     namespaceAnnotations: {}
