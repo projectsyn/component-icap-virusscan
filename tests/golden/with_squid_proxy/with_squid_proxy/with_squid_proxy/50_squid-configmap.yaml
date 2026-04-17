@@ -4,6 +4,7 @@ data:
     icap_service service_avi_1 reqmod_precache icap://icap.with_squid_proxy.svc.cluster.local:80/squidclamav bypass=on on-overload=bypass
     adaptation_service_set avi service_avi_1
     adaptation_access avi allow all
+  UPSTREAM_HOST: nginx-return-200.with_squid_proxy.svc.cluster.local
 kind: ConfigMap
 metadata:
   labels:

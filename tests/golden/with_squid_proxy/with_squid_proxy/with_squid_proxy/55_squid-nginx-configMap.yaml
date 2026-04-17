@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  default.conf: |
+    server {
+      listen 8080;
+
+      location / {
+        return 200;
+      }
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    app: nginx
+  name: squid-nginx-configmap
+  namespace: with_squid_proxy

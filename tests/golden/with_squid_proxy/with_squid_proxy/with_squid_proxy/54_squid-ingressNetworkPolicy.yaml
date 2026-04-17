@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: squid-allow-gateway
+  namespace: with_squid_proxy
+spec:
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: gateway-dev-ns
+  podSelector:
+    matchLabels:
+      app: squid
+  policyTypes:
+    - Ingress
