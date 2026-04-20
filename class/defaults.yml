@@ -40,7 +40,7 @@ parameters:
             spec: {}
         container_cicap:
           # renovate: datasource=docker depName=ghcr.io/vshn/c-icap
-          image: "ghcr.io/vshn/c-icap:20260420_094855"
+          image: "ghcr.io/vshn/c-icap:20260420_095301"
           resources:
             requests:
               cpu: "120m"
