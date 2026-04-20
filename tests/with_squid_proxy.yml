@@ -36,7 +36,7 @@ parameters:
               cpu: "100m"
         container_clamav:
           # renovate: datasource=docker depName=ghcr.io/vshn/clamav
-          image: "ghcr.io/vshn/clamav:20260420_095612"
+          image: "ghcr.io/vshn/clamav:20260420_095651"
           resources:
             limits:
               memory: "4072Mi"
