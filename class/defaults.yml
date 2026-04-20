@@ -142,7 +142,7 @@ parameters:
             spec: {}
         container_nginx:
           # renovate: datasource=docker depName=ghcr.io/nginx/nginx-unprivileged
-          image: "ghcr.io/nginx/nginx-unprivileged:1.29.8-alpine3.23"
+          image: "ghcr.io/nginx/nginx-unprivileged:1.30.0-alpine3.23"
           resources:
             requests:
               cpu: '50m'
