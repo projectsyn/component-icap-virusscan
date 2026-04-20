@@ -51,7 +51,7 @@
         "vshn/c-icap",
         "vshn/clamav"
       ],
-      "versioning": "loose"
+      "versioning": "regex:^(?<version>.*)$"
     }
   ],
   "customManagers": [
