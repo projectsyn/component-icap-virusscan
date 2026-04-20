@@ -14,5 +14,5 @@ Setup:
 # change this to the virus scanning endpoint
 URL=https://httpbin.org/anything
 
-docker compose run --rm python-http-client ./concurrent-requests.py --url $URL --concurrency 3 --requests 10 --file test-files/medium-archive-with-eicar.zip
+./concurrent-requests.sh --url $URL --concurrency 3 --requests 10 --file test-files/medium-archive-with-eicar.zip
 ```
