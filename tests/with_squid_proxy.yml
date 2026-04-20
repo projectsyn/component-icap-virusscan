@@ -30,13 +30,13 @@ parameters:
             spec: {}
         container_cicap:
           # renovate: datasource=docker depName=ghcr.io/vshn/c-icap
-          image: "ghcr.io/vshn/c-icap:20260414-151901"
+          image: "ghcr.io/vshn/c-icap:20260420_094855"
           resources:
             requests:
               cpu: "100m"
         container_clamav:
           # renovate: datasource=docker depName=ghcr.io/vshn/clamav
-          image: "ghcr.io/vshn/clamav:20260414-150513"
+          image: "ghcr.io/vshn/clamav:20260420_095612"
           resources:
             limits:
               memory: "4072Mi"
