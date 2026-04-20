@@ -106,7 +106,7 @@ parameters:
           template:
             spec: {}
         container_squid:
-          # renovate: datasource=docker depName=ghcr.io/bacluc
+          # renovate: datasource=docker depName=ghcr.io/bacluc/squid
           image: "ghcr.io/bacluc/squid:2"
           resources:
             requests:
