@@ -45,13 +45,6 @@
         "docker"
       ],
       "labels": []
-    },
-    {
-      "matchDepNames": [
-        "vshn/c-icap",
-        "vshn/clamav"
-      ],
-      "versioning": "regex:^(?<version>.*)$"
     }
   ],
   "customManagers": [
