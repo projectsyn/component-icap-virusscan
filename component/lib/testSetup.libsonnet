@@ -60,8 +60,8 @@ local nginxDeployment = std.mergePatch({
       metadata: {
         labels: nginxLabels,
         annotations: {
-            'checksum/config': std.sha256(std.manifestJsonMinified(nginxConfigMap))
-        }
+          'checksum/config': std.sha256(std.manifestJsonMinified(nginxConfigMap)),
+        },
       },
       spec: {
         containers: [
@@ -142,19 +142,19 @@ local deployment = std.mergePatch({
             name: 'squid',
             ports: [ { name: 'http', containerPort: 3128 } ],
             env: [
-                {
-                    name: 'ICAP_SERVICE_CONFIG',
-                    value: |||
-                             icap_service service_avi_1 reqmod_precache icap://icap.%s.svc.cluster.local:80/squidclamav bypass=on on-overload=bypass
-                             adaptation_service_set avi service_avi_1
-                             adaptation_access avi allow all
-                           ||| % [ params.namespace ],
-                },
-                {
-                  name: 'UPSTREAM_HOST',
-                  value: '%s.%s.svc.cluster.local' % [ nginxService.metadata.name, nginxService.metadata.namespace ],
-                }
-            ]
+              {
+                name: 'ICAP_SERVICE_CONFIG',
+                value: |||
+                  icap_service service_avi_1 reqmod_precache icap://icap.%s.svc.cluster.local:80/squidclamav bypass=on on-overload=bypass
+                  adaptation_service_set avi service_avi_1
+                  adaptation_access avi allow all
+                ||| % [ params.namespace ],
+              },
+              {
+                name: 'UPSTREAM_HOST',
+                value: '%s.%s.svc.cluster.local' % [ nginxService.metadata.name, nginxService.metadata.namespace ],
+              },
+            ],
           }, sanitizedContainer(deploymentParams.container_squid)),
         ],
       },
