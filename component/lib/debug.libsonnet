@@ -19,6 +19,11 @@ local sanitizedParams = std.mergePatch(
           image: 'escaped/image',
         },
       },
+      "squid-nginx": {
+         container_nginx: {
+            image: 'escaped/image',
+         }
+      }
     },
   }
 );
