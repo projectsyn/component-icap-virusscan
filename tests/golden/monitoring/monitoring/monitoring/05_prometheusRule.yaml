@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app: clamav-icap
+    instance: monitoring
+  name: monitoringRules
+  namespace: monitoring
+spec:
+  groups:
+    - name: monitoring
+      rules:
+        - alert: KubernetesReplicasetReplicasMismatch
+          annotations:
+            description: '"ReplicaSet {{ $labels.namespace }}/{{ $labels.replicaset
+              }} replicas mismatch\n VALUE = {{ $value }}\n  LABELS = {{ $labels }}"'
+            runbook_url: alert.rubook.com
+            summary: Kubernetes ReplicaSet replicas mismatch (instance {{ $labels.instance
+              }})
+          expr: kube_replicaset_spec_replicas{namespace="test-namespace"} > kube_replicaset_status_ready_replicas{namespace="test-namespace"}
+          for: 2m
+          keep_firing_for: 10m
+          labels:
+            severity: warning
+        - alert: ContainerOOMKilled
+          annotations:
+            description: |-
+              Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} has been OOMKilled {{ $value }} times in the last 10 minutes.
+                VALUE = {{ $value }}
+                LABELS = {{ $labels }}
+            summary: Kubernetes Container oom killer (instance {{ $labels.instance
+              }})
+          expr: (kube_pod_container_status_restarts_total{namespace="test-namespace"}
+            - kube_pod_container_status_restarts_total{namespace="test-namespace"}
+            offset 10m >= 1) and ignoring (reason) min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled",namespace="test-namespace"}[10m])
+            == 1
+          for: 2m
+          keep_firing_for: 10m
+          labels:
+            severity: warning

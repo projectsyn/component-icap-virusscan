@@ -1,8 +1,10 @@
 // main template for icap-virusscan
 local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
-local inv = kap.inventory();
+local prometheus = import 'lib/prometheus.libsonnet';
+local com = import 'lib/commodore.libjsonnet';
 local sanitizedContainerLib = import 'lib/sanitizedContainer.libsonnet';
+local inv = kap.inventory();
 local sanitizedContainer = sanitizedContainerLib.sanitizedContainer;
 
 // The hiera parameters for the component
@@ -31,8 +33,8 @@ local namespace = (
     kube.Namespace(params.namespace)
 ) + {
   metadata+: {
-    labels+: com.makeMergeable(params.namespaceLabels),
-    annotations+: com.makeMergeable(params.namespaceAnnotations),
+    labels+: params.namespaceLabels,
+    annotations+: params.namespaceAnnotations,
   },
 };
 
@@ -186,11 +188,8 @@ local prometheusRule = {
     namespace: params.namespace,
     labels: selectorLabels,
   },
-  spec: {
-  	groups: {
-		parameters.monitoring.prometheusrules
-	}
-  }
+  spec: params.monitoring.prometheusRuleSpec
+
 };
 
 {
