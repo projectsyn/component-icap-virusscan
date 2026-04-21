@@ -15,31 +15,7 @@ parameters:
 
     monitoring:
       enabled: false
-      prometheusrules:
-        - name: monitoring
-          syn_team:
-          rules:
-            - alert: KubernetesReplicasetReplicasMismatch
-              annotations:
-                runbook_url: "alert.rubook.com"
-                summary: "Kubernetes ReplicaSet replicas mismatch (instance {{ $labels.instance }})"
-                description: >-
-                  "ReplicaSet {{ $labels.namespace }}/{{ $labels.replicaset }} replicas mismatch\n
-                  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-              expr: kube_replicaset_spec_replicas{namespace=~"${_instance}"} > kube_replicaset_status_ready_replicas{namespace=~"${_instance}"}
-              for: 2m
-              keep_firing_for: 10m
-              labels:
-                severity: warning
-            - alert: ContainerOOMKilled
-              expr: (kube_pod_container_status_restarts_total{namespace="${_instance}"} - kube_pod_container_status_restarts_total{namespace="${_instance}"} offset 10m >= 1) and ignoring (reason) min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled",namespace="${_instance}"}[10m]) == 1
-              for: 2m
-              labels:
-                severity: warning
-              annotations:
-                summary: Kubernetes Container oom killer (instance {{ $labels.instance }})
-                description: "Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} has been OOMKilled {{ $value }} times in the last 10 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-              keep_firing_for: 10m
+      prometheusRuleSpec: {}
 
     enable_squid: false
     squid_domain:
