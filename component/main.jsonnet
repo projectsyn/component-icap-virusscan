@@ -1,8 +1,10 @@
 // main template for icap-virusscan
 local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
-local inv = kap.inventory();
+local prometheus = import 'lib/prometheus.libsonnet';
+local com = import 'lib/commodore.libjsonnet';
 local sanitizedContainerLib = import 'lib/sanitizedContainer.libsonnet';
+local inv = kap.inventory();
 local sanitizedContainer = sanitizedContainerLib.sanitizedContainer;
 
 // The hiera parameters for the component
@@ -18,7 +20,18 @@ local selectorLabels = {
   instance: instance,
 };
 
-local namespace = kube.Namespace(params.namespace) {
+local namespace = (
+  if params.monitoring.enabled && std.member(inv.applications, 'prometheus') then
+    prometheus.RegisterNamespace(kube.Namespace(params.namespace))
+  else if params.monitoring.enabled && inv.parameters.facts.distribution == 'openshift4' then
+    kube.Namespace(params.namespace) {
+      metadata+: {
+        labels+: { 'openshift.io/cluster-monitoring': 'true' },
+      },
+    }
+  else
+    kube.Namespace(params.namespace)
+) + {
   metadata+: {
     labels+: params.namespaceLabels,
     annotations+: params.namespaceAnnotations,
@@ -167,11 +180,24 @@ local networkPolicies = {
   },
 };
 
+local prometheusRule = {
+  apiVersion: 'monitoring.coreos.com/v1',
+  kind: 'PrometheusRule',
+  metadata: {
+    name: 'monitoringRules',
+    namespace: params.namespace,
+    labels: selectorLabels,
+  },
+  spec: params.monitoring.prometheusRuleSpec
+
+};
+
 {
   [if params.createNamespace then '00_namespace']: namespace,
   '01_deployment': deployment,
   [if params.replicas > 1 then '02_podDisruptionBudget']: podDisruptionBudget,
   '03_service': service,
   [if hasNetworkPolicies then '04_networkPolicies']: networkPolicies,
+  [if params.monitoring.enabled then '05_prometheusRule']: prometheusRule,
 } + (import 'lib/testSetup.libsonnet')
 + (import 'lib/debug.libsonnet')
