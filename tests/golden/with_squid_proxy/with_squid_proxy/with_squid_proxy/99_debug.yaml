@@ -189,6 +189,9 @@ data:
       gatewayNamespace: "gateway-dev-ns"
       sectionName: "http-default"
     minAvailable: 1
+    monitoring:
+      enabled: false
+      prometheusRuleSpec: {}
     namespace: "with_squid_proxy"
     namespaceAnnotations: {}
     namespaceLabels: {}

@@ -13,6 +13,10 @@ parameters:
     namespaceAnnotations: {}
     namespaceLabels: {}
 
+    monitoring:
+      enabled: false
+      prometheusRuleSpec: {}
+
     enable_squid: false
     squid_domain:
     httproute:
