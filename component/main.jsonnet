@@ -184,7 +184,7 @@ local prometheusRule = {
   apiVersion: 'monitoring.coreos.com/v1',
   kind: 'PrometheusRule',
   metadata: {
-    name: 'monitoringRules',
+    name: 'icap-rules',
     namespace: params.namespace,
     labels: selectorLabels,
   },
