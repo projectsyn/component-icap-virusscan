@@ -37,7 +37,7 @@ spec:
                     app: clamav-icap
                     instance: with_squid_proxy
                 topologyKey: kubernetes.io/hostname
-              weight: 1
+              weight: 50
       containers:
         - env:
             - name: TEST

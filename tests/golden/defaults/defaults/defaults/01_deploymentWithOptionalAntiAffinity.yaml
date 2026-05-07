@@ -31,7 +31,7 @@ spec:
                     app: clamav-icap
                     instance: defaults
                 topologyKey: kubernetes.io/hostname
-              weight: 1
+              weight: 50
       containers:
         - env: []
           image: escaped/image
