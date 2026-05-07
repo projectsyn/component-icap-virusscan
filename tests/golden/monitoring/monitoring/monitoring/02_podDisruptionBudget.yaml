@@ -4,7 +4,7 @@ metadata:
   labels:
     app: clamav-icap
     instance: monitoring
-  name: clamav-icap
+  name: clamav-icap-strict-anti-affinity
   namespace: monitoring
 spec:
   minAvailable: 1

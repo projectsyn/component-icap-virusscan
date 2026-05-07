@@ -196,6 +196,7 @@ data:
     namespaceAnnotations: {}
     namespaceLabels: {}
     replicas: 2
+    replicasWithOptionalAntiAffinity: 3
     squid_domain: "test-icap-virusscan.apps.c-hin-test-rma1.hin-infra.ch"
     test: true
 kind: ConfigMap

@@ -4,10 +4,10 @@ metadata:
   labels:
     app: clamav-icap
     instance: defaults
-  name: clamav-icap
+  name: clamav-icap-strict-optional-affinity
   namespace: defaults
 spec:
-  replicas: 2
+  replicas: 0
   selector:
     matchLabels:
       app: clamav-icap

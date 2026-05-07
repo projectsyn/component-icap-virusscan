@@ -26,6 +26,7 @@ parameters:
       gatewayNamespace:
       sectionName: http-default
     replicas: 2
+    replicasWithOptionalAntiAffinity: 0
     minAvailable: 1
     env:
       clamav: {}

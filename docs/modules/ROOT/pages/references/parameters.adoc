@@ -17,3 +17,36 @@ The namespace in which to deploy this component.
 ----
 namespace: example-namespace
 ----
+
+== `replicas`
+
+[horizontal]
+type:: integer
+default:: `2`
+
+Number of replicas with strict podAntiAffinity.
+You cannot schedule more of them as you have nodes.
+
+
+== Example
+
+[source,yaml]
+----
+replicas: 2
+----
+
+== `replicasWithOptionalAntiAffinity`
+
+[horizontal]
+type:: integer
+default:: `0`
+
+Number of replicas with requiredDuringSchedulingIgnoredDuringExecution podAntiAffinity. If you need more replicas than you have nodes.
+
+
+== Example
+
+[source,yaml]
+----
+replicas: 2
+----
