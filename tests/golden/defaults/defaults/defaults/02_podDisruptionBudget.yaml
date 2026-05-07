@@ -4,7 +4,7 @@ metadata:
   labels:
     app: clamav-icap
     instance: defaults
-  name: clamav-icap
+  name: clamav-icap-strict-anti-affinity
   namespace: defaults
 spec:
   minAvailable: 1

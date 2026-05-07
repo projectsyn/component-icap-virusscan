@@ -1,8 +1,8 @@
 // main template for icap-virusscan
+local com = import 'lib/commodore.libjsonnet';
 local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
 local prometheus = import 'lib/prometheus.libsonnet';
-local com = import 'lib/commodore.libjsonnet';
 local sanitizedContainerLib = import 'lib/sanitizedContainer.libsonnet';
 local inv = kap.inventory();
 local sanitizedContainer = sanitizedContainerLib.sanitizedContainer;
@@ -51,12 +51,10 @@ local deployment = std.mergePatch({
   apiVersion: 'apps/v1',
   kind: 'Deployment',
   metadata: {
-    name: 'clamav-icap',
     namespace: params.namespace,
     labels: selectorLabels,
   },
   spec: {
-    replicas: params.replicas,
     selector: {
       matchLabels: selectorLabels,
     },
@@ -65,21 +63,6 @@ local deployment = std.mergePatch({
         labels: selectorLabels,
       },
       spec: {
-        affinity: {
-          podAntiAffinity: {
-            preferredDuringSchedulingIgnoredDuringExecution: [
-              {
-                weight: 1,
-                podAffinityTerm: {
-                  labelSelector: {
-                    matchLabels: selectorLabels,
-                  },
-                  topologyKey: 'kubernetes.io/hostname',
-                },
-              },
-            ],
-          },
-        },
         containers: [
           std.mergePatch({
             name: 'clamav',
@@ -109,11 +92,64 @@ local deployment = std.mergePatch({
   },
 }, sanitizedDeploymentParams);
 
+local deploymentWithStrictAntiAffinity = std.mergePatch(deployment, {
+  metadata: {
+    name: 'clamav-icap-strict-anti-affinity',
+  },
+  spec: {
+    replicas: params.replicas,
+    template: {
+      spec: {
+        affinity: {
+          podAntiAffinity: {
+            requiredDuringSchedulingIgnoredDuringExecution: [
+              {
+                labelSelector: {
+                  matchLabels: selectorLabels,
+                },
+                topologyKey: 'kubernetes.io/hostname',
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+});
+
+local deploymentWithOptionalAntiAffinity = std.mergePatch(deployment, {
+  metadata: {
+    name: 'clamav-icap-strict-optional-affinity',
+  },
+  spec: {
+    replicas: params.replicasWithOptionalAntiAffinity,
+    template: {
+      spec: {
+        affinity: {
+          podAntiAffinity: {
+            preferredDuringSchedulingIgnoredDuringExecution: [
+              {
+                weight: 1,
+                podAffinityTerm: {
+                  labelSelector: {
+                    matchLabels: selectorLabels,
+                  },
+                  topologyKey: 'kubernetes.io/hostname',
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+});
+
 local podDisruptionBudget = {
   apiVersion: 'policy/v1',
   kind: 'PodDisruptionBudget',
   metadata: {
-    name: deployment.metadata.name,
+    name: deploymentWithStrictAntiAffinity.metadata.name,
     namespace: params.namespace,
     labels: selectorLabels,
   },
@@ -188,14 +224,15 @@ local prometheusRule = {
     namespace: params.namespace,
     labels: selectorLabels,
   },
-  spec: params.monitoring.prometheusRuleSpec
+  spec: params.monitoring.prometheusRuleSpec,
 
 };
 
 {
   [if params.createNamespace then '00_namespace']: namespace,
-  '01_deployment': deployment,
-  [if params.replicas > 1 then '02_podDisruptionBudget']: podDisruptionBudget,
+  '01_deploymentWithStrictAntiAffinity': deploymentWithStrictAntiAffinity,
+  '01_deploymentWithOptionalAntiAffinity': deploymentWithOptionalAntiAffinity,
+  [if (params.replicas + params.replicasWithOptionalAntiAffinity) > 1 then '02_podDisruptionBudget']: podDisruptionBudget,
   '03_service': service,
   [if hasNetworkPolicies then '04_networkPolicies']: networkPolicies,
   [if params.monitoring.enabled then '05_prometheusRule']: prometheusRule,

@@ -7,7 +7,7 @@ metadata:
     add-label: from_with_squid_proxy
     app: clamav-icap
     instance: with_squid_proxy
-  name: clamav-icap
+  name: clamav-icap-strict-anti-affinity
   namespace: with_squid_proxy
 spec:
   replicas: 2
@@ -30,14 +30,12 @@ spec:
     spec:
       affinity:
         podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app: clamav-icap
-                    instance: with_squid_proxy
-                topologyKey: kubernetes.io/hostname
-              weight: 1
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: clamav-icap
+                  instance: with_squid_proxy
+              topologyKey: kubernetes.io/hostname
       containers:
         - env:
             - name: TEST

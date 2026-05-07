@@ -9,6 +9,7 @@ parameters:
         TEST: true
       c-icap:
         ANOTHER_TEST: false
+    replicasWithOptionalAntiAffinity: 3
     httproute:
       enabled: true
       gatewayName: gateway-dev
