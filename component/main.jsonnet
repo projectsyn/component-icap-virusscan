@@ -129,7 +129,7 @@ local deploymentWithOptionalAntiAffinity = std.mergePatch(deployment, {
           podAntiAffinity: {
             preferredDuringSchedulingIgnoredDuringExecution: [
               {
-                weight: 1,
+                weight: 50,
                 podAffinityTerm: {
                   labelSelector: {
                     matchLabels: selectorLabels,
