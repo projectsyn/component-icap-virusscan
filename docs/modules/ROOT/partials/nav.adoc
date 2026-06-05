@@ -1,2 +1,7 @@
 * xref:index.adoc[Home]
+
+.How-to guides
+** xref:how-tos/airlock-microgatway.adoc[Integrate with Airlock Microgateway]
+
+.Technical reference
 * xref:references/parameters.adoc[Parameters]

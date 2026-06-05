@@ -1,0 +1,44 @@
+= Configure Airlock Microgateway to use ICAP Virus Scanner
+
+This guide explains how to configure the Airlock Microgateway to use the component-icap-virusscan for content scanning.
+
+== Prerequisites
+
+* The `icap-virusscan` component is deployed and running
+* The https://www.airlock.com/secure-access-hub/komponenten/microgateway[Airlock Microgateway^] is installed in your cluster
+
+== Determine the ICAP Service Endpoint
+
+The ICAP service is exposed via a Kubernetes Service named `icap` in the namespace where component-icap-virusscan is deployed.
+
+The service is available at:
+
+[source]
+----
+icap://icap.<namespace>.svc.cluster.local:80/squidclamav
+----
+
+Replace `<namespace>` with the namespace where the ICAP virus scanner is deployed.
+
+== Create ICAPProvider Resource
+
+Create an `ICAPProvider` resource to configure the Microgateway to use the ICAP virus scanner.
+For complete details on the ICAP integration, see the https://docs.airlock.com/microgateway/latest/index/1773337453280.html?highlight=icap[ICAP integration^].
+
+.Example ICAPProvider configuration
+[source,yaml]
+----
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: ICAPProvider
+metadata:
+  name: icap-virus-scanner
+  namespace: <your-httproute-namespace>
+spec:
+  endpoints:
+  - uri: icap://icap.<namespace>.svc.cluster.local:80/squidclamav
+  timeouts:
+    connect: 2s
+    maxDuration: 30s
+----
+
+Replace `<namespace>` with the namespace where the ICAP virus scanner is deployed.
