@@ -30,7 +30,7 @@ spec:
                 adaptation_access avi allow all
             - name: UPSTREAM_HOST
               value: nginx-return-200.with_squid_proxy.svc.cluster.local
-          image: escaped/image
+          image: ghcr.io/bacluc/squid:2
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5

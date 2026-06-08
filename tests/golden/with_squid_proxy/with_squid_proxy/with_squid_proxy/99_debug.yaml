@@ -18,7 +18,7 @@ data:
     deployments:
       clamav-icap:
         container_cicap:
-          image: "escaped/image"
+          image: "ghcr.io/vshn/c-icap:20260420_095301"
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
@@ -48,7 +48,7 @@ data:
               port: 1344
             timeoutSeconds: 5
         container_clamav:
-          image: "escaped/image"
+          image: "ghcr.io/vshn/clamav:20260420_095651"
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
@@ -96,7 +96,7 @@ data:
             spec: {}
       squid:
         container_squid:
-          image: "escaped/image"
+          image: "ghcr.io/bacluc/squid:2"
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
@@ -139,7 +139,7 @@ data:
             spec: {}
       squid-nginx:
         container_nginx:
-          image: "escaped/image"
+          image: "ghcr.io/nginx/nginx-unprivileged:1.31.2-alpine3.23"
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -188,6 +188,23 @@ data:
       gatewayName: "gateway-dev"
       gatewayNamespace: "gateway-dev-ns"
       sectionName: "http-default"
+    images:
+      cicap:
+        registry: "ghcr.io"
+        repository: "vshn/c-icap"
+        tag: "20260420_095301"
+      clamav:
+        registry: "ghcr.io"
+        repository: "vshn/clamav"
+        tag: "20260420_095651"
+      nginx:
+        registry: "ghcr.io"
+        repository: "nginx/nginx-unprivileged"
+        tag: "1.31.2-alpine3.23"
+      squid:
+        registry: "ghcr.io"
+        repository: "bacluc/squid"
+        tag: "2"
     minAvailable: 1
     monitoring:
       enabled: false
@@ -198,7 +215,6 @@ data:
     replicas: 2
     replicasWithOptionalAntiAffinity: 3
     squid_domain: "test-icap-virusscan.apps.c-hin-test-rma1.hin-infra.ch"
-    test: true
 kind: ConfigMap
 metadata:
   name: debug-configmap

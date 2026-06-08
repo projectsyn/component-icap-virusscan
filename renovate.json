@@ -11,6 +11,15 @@
     "dependency"
   ],
   "separateMinorPatch": true,
+  "postUpgradeTasks": {
+    "commands": [
+      "make gen-golden-all"
+    ],
+    "fileFilters": [
+      "tests/golden/**"
+    ],
+    "executionMode": "update"
+  },
   "suppressNotifications": [
     "artifactErrors"
   ],
@@ -39,17 +48,6 @@
         "dependency",
         "automerge",
         "bump:minor"
-      ]
-    }
-  ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/.*.ya?ml/"
-      ],
-      "matchStrings": [
-        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\\s.*(image): [^:]*:(?<currentValue>.*)\"\\s"
       ]
     }
   ]

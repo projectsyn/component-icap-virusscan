@@ -32,7 +32,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
         - env: []
-          image: escaped/image
+          image: ghcr.io/vshn/clamav:20260420_095651
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
@@ -70,7 +70,7 @@ spec:
               value: 127.0.0.1
             - name: CLAMD_MAXSIZE
               value: 50m
-          image: escaped/image
+          image: ghcr.io/vshn/c-icap:20260420_095301
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5

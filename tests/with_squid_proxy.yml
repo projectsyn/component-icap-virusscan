@@ -1,7 +1,6 @@
 parameters:
   with_squid_proxy:
     debug: true
-    test: true
     enable_squid: true
     squid_domain: test-icap-virusscan.apps.c-hin-test-rma1.hin-infra.ch
     env:
@@ -30,14 +29,10 @@ parameters:
                 add-annotation: "from_with_squid_proxy"
             spec: {}
         container_cicap:
-          # renovate: datasource=docker depName=ghcr.io/vshn/c-icap
-          image: "ghcr.io/vshn/c-icap:20260420_095301"
           resources:
             requests:
               cpu: "100m"
         container_clamav:
-          # renovate: datasource=docker depName=ghcr.io/vshn/clamav
-          image: "ghcr.io/vshn/clamav:20260420_095651"
           resources:
             limits:
               memory: "4072Mi"
@@ -54,9 +49,8 @@ parameters:
                 add-label: "from_with_squid_proxy"
               annotations:
                 add-annotation: "from_with_squid_proxy"
+            spec: {}
         container_squid:
-          # renovate: datasource=docker depName=ghcr.io/bacluc/squid
-          image: "ghcr.io/bacluc/squid:2"
           resources:
             requests:
               cpu: '100m'
