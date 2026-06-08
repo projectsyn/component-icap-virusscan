@@ -1,6 +1,4 @@
 local kap = import 'lib/kapitan.libjsonnet';
-local sanitizedContainerLib = import 'sanitizedContainer.libsonnet';
-local sanitizedContainer = sanitizedContainerLib.sanitizedContainer;
 local inv = kap.inventory();
 local params = inv.parameters.icap_virusscan;
 
@@ -77,7 +75,7 @@ local nginxDeployment = std.mergePatch({
                 subPath: nginxConfigEntryName,
               },
             ],
-          }, sanitizedContainer(nginxDeploymentParams.container_nginx)),
+          }, nginxDeploymentParams.container_nginx),
         ],
 
         volumes: [
@@ -155,7 +153,7 @@ local deployment = std.mergePatch({
                 value: '%s.%s.svc.cluster.local' % [ nginxService.metadata.name, nginxService.metadata.namespace ],
               },
             ],
-          }, sanitizedContainer(deploymentParams.container_squid)),
+          }, deploymentParams.container_squid),
         ],
       },
     },
