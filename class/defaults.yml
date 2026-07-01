@@ -20,10 +20,12 @@ parameters:
       cicap:
         registry: ghcr.io
         repository: vshn/c-icap
+        # renovate: datasource=docker depName=ghcr.io/vshn/c-icap
         tag: "20260420_095301"
       clamav:
         registry: ghcr.io
         repository: vshn/clamav
+        # renovate: datasource=docker depName=ghcr.io/vshn/clamav
         tag: "20260420_095651"
       squid:
         registry: ghcr.io

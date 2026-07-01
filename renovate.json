@@ -50,5 +50,16 @@
         "bump:minor"
       ]
     }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/.*.ya?ml/"
+      ],
+      "matchStrings": [
+        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\\s.*(tag): \"(?<currentValue>.*)\"\\s"
+      ]
+    }
   ]
 }
