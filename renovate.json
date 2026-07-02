@@ -49,17 +49,13 @@
         "automerge",
         "bump:minor"
       ]
-    }
-  ],
-  "customManagers": [
+    },
     {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/.*.ya?ml/"
+      "matchDepNames": [
+        "ghcr.io/vshn/c-icap",
+        "ghcr.io/vshn/clamav"
       ],
-      "matchStrings": [
-        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\\s.*(tag): \"(?<currentValue>.*)\"\\s"
-      ]
+      "versioning": "loose"
     }
   ]
 }
