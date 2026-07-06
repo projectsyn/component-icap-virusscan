@@ -26,7 +26,7 @@ parameters:
         registry: ghcr.io
         repository: vshn/clamav
         # renovate: datasource=docker depName=ghcr.io/vshn/clamav
-        tag: "20260702_081000"
+        tag: "20260706_161446"
       squid:
         registry: ghcr.io
         repository: bacluc/squid
