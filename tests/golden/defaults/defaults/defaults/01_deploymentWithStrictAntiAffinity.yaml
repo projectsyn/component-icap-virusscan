@@ -32,7 +32,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
         - env: []
-          image: ghcr.io/vshn/clamav:20260706_161446
+          image: ghcr.io/vshn/clamav:20260710_084536
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
