@@ -40,7 +40,7 @@ spec:
         - env:
             - name: TEST
               value: 'true'
-          image: ghcr.io/vshn/clamav:20260710_084536
+          image: ghcr.io/vshn/clamav:20260713_173424
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
