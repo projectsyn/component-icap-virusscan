@@ -70,7 +70,7 @@ spec:
               value: 127.0.0.1
             - name: CLAMD_MAXSIZE
               value: 50m
-          image: ghcr.io/vshn/c-icap:20260819_105119
+          image: ghcr.io/vshn/c-icap:20260820_071314
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
