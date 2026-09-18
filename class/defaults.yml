@@ -21,7 +21,7 @@ parameters:
         registry: ghcr.io
         repository: vshn/c-icap
         # renovate: datasource=docker depName=ghcr.io/vshn/c-icap
-        tag: "20260917_000755"
+        tag: "20260918_075104"
       clamav:
         registry: ghcr.io
         repository: vshn/clamav
