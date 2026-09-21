@@ -48,7 +48,7 @@ data:
               port: 1344
             timeoutSeconds: 5
         container_clamav:
-          image: "ghcr.io/vshn/clamav:20260914_071445"
+          image: "ghcr.io/vshn/clamav:20260921_081413"
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
@@ -196,7 +196,7 @@ data:
       clamav:
         registry: "ghcr.io"
         repository: "vshn/clamav"
-        tag: "20260914_071445"
+        tag: "20260921_081413"
       nginx:
         registry: "ghcr.io"
         repository: "nginx/nginx-unprivileged"
