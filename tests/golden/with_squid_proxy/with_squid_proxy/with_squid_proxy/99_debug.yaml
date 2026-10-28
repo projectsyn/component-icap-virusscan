@@ -18,7 +18,7 @@ data:
     deployments:
       clamav-icap:
         container_cicap:
-          image: "ghcr.io/vshn/c-icap:20261017_105500"
+          image: "ghcr.io/vshn/c-icap:20261028_075833"
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
@@ -192,7 +192,7 @@ data:
       cicap:
         registry: "ghcr.io"
         repository: "vshn/c-icap"
-        tag: "20261017_105500"
+        tag: "20261028_075833"
       clamav:
         registry: "ghcr.io"
         repository: "vshn/clamav"
