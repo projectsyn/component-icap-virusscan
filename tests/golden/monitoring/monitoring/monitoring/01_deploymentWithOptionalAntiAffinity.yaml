@@ -34,7 +34,7 @@ spec:
               weight: 50
       containers:
         - env: []
-          image: ghcr.io/vshn/clamav:20261026_122004
+          image: ghcr.io/vshn/clamav:20261030_083829
           livenessProbe:
             failureThreshold: 3
             periodSeconds: 5
