@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/projectsyn/commodore-component-template.git",
-  "commit": "7e46facc758385bc32eeecab92b4639c66fd4e4f",
+  "commit": "3c2cc0561fba5c6e1c26208f1b6d77bb72da8b5f",
   "checkout": "main",
   "context": {
     "cookiecutter": {
@@ -25,7 +25,7 @@
       "github_name": "component-icap-virusscan",
       "github_url": "https://github.com/projectsyn/component-icap-virusscan",
       "_template": "https://github.com/projectsyn/commodore-component-template.git",
-      "_commit": "7e46facc758385bc32eeecab92b4639c66fd4e4f"
+      "_commit": "3c2cc0561fba5c6e1c26208f1b6d77bb72da8b5f"
     }
   },
   "directory": null
